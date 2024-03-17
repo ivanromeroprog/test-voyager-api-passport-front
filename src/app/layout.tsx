@@ -1,8 +1,16 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Roboto_Condensed } from "next/font/google";
 import "./globals.css";
+import { ThemeProvider } from "@/providers/ThemeProvider";
+import { ModeToggle } from "@/components/ui/mode-toggle";
+import { NavMenu } from "@/components/NavMenu";
+import Breadcrumb from "@/components/BreadcrumbNav";
+import { AccessTokenProvider } from "@/providers/AccessTokenProvider";
 
-const inter = Inter({ subsets: ["latin"] });
+const primary = Roboto_Condensed({
+  weight: ["400", "700"],
+  subsets: ["latin"],
+});
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -16,7 +24,24 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={inter.className}>{children}</body>
+      <body className={primary.className}>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <header className="flex justify-between p-2 max-w-screen-xl xl:mx-auto  mx-5">
+            <ModeToggle />
+            <h1 className="text-xl flex justify-center items-center md:text-2xl xl:text-3xl bg-gradient-to-br from-primary to-black dark:to-white bg-clip-text text-transparent">
+              NEXT.JS 14 | Tailwind | Shadcn UI
+            </h1>
+            <NavMenu />
+          </header>
+          <Breadcrumb />
+          <AccessTokenProvider>{children}</AccessTokenProvider>
+        </ThemeProvider>
+      </body>
     </html>
   );
 }
