@@ -1,38 +1,49 @@
+import {
+  accessTokenCookieName,
+  login,
+  refreshTokenCookieName,
+} from "@/lib/services";
+import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 
 async function handler(req: NextRequest) {
-  const { username, password } = await req.json();
+  const { email, password } = await req.json();
 
-  // Verificar si se proporcionaron el nombre de usuario y la contraseña
-  if (!username || !password) {
-    return NextResponse.json(
-      { message: "Se requiere nombre de usuario y contraseña" },
-      { status: 400 }
-    );
+  const response = await login({ email, password });
+
+  const accessToken = response.data?.data?.tokens?.access_token;
+  const refreshToken = response.data?.data?.tokens?.refresh_token;
+
+  const userData = response.data?.data?.user;
+
+  //Si no vino el access token devolver status y respuesta del server
+  if (!accessToken) {
+    return NextResponse.json(response?.data, { status: response.status });
   }
 
-  // Autenticar al usuario (aquí puedes usar tu lógica de autenticación)
-  const isValidUser = await authenticateUser(username, password);
+  //Guardar access token para usar en server
+  cookies().set({
+    name: accessTokenCookieName,
+    value: accessToken,
+    httpOnly: true,
+    path: "/",
+  });
 
-  if (!isValidUser) {
-    return NextResponse.json(
-      { message: "Credenciales incorrectas" },
-      { status: 401 }
-    );
+  //Guardar aresresh token para usar en server
+  if (!refreshToken) {
+    cookies().set({
+      name: refreshTokenCookieName,
+      value: refreshToken,
+      httpOnly: true,
+      path: "/",
+    });
   }
 
-  // Devolver el token como respuesta
-  return NextResponse.json({ access_token: "test" });
-}
-
-// Función para autenticar al usuario (debes implementar tu propia lógica de autenticación)
-async function authenticateUser(username: string, password: string) {
-  // Aquí puedes implementar tu lógica de autenticación, como verificar en una base de datos
-  // Por ejemplo, si estás utilizando bcrypt para hashear contraseñas, podrías hacer algo como:
-  // const hashedPassword = await getHashedPasswordFromDatabase(username);
-  // return compare(password, hashedPassword);
-  // Para este ejemplo, vamos a simular que todas las credenciales son válidas
-  return true;
+  return NextResponse.json({
+    message: "OK",
+    access_token: accessToken,
+    user: userData,
+  });
 }
 
 export { handler as POST };

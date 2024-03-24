@@ -6,6 +6,8 @@ import { ModeToggle } from "@/components/ui/mode-toggle";
 import { NavMenu } from "@/components/NavMenu";
 import Breadcrumb from "@/components/BreadcrumbNav";
 import { AccessTokenProvider } from "@/providers/AccessTokenProvider";
+import { AxiosProvider } from "@/providers/AxiosProvider";
+import { Toaster } from "sonner";
 
 const primary = Roboto_Condensed({
   weight: ["400", "700"],
@@ -23,7 +25,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="es">
       <body className={primary.className}>
         <ThemeProvider
           attribute="class"
@@ -39,7 +41,10 @@ export default function RootLayout({
             <NavMenu />
           </header>
           <Breadcrumb />
-          <AccessTokenProvider>{children}</AccessTokenProvider>
+          <AccessTokenProvider>
+            <AxiosProvider>{children}</AxiosProvider>
+          </AccessTokenProvider>
+          <Toaster />
         </ThemeProvider>
       </body>
     </html>
