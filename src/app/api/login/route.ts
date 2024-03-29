@@ -13,7 +13,6 @@ async function handler(req: NextRequest) {
 
   const accessToken = response.data?.data?.tokens?.access_token;
   const refreshToken = response.data?.data?.tokens?.refresh_token;
-
   const userData = response.data?.data?.user;
 
   //Si no vino el access token devolver status y respuesta del server
@@ -29,15 +28,15 @@ async function handler(req: NextRequest) {
     path: "/",
   });
 
-  //Guardar aresresh token para usar en server
-  if (!refreshToken) {
+  //Guardar resresh token para usar en server
+  // if (!refreshToken) {
     cookies().set({
       name: refreshTokenCookieName,
       value: refreshToken,
       httpOnly: true,
       path: "/",
     });
-  }
+  // }
 
   return NextResponse.json({
     message: "OK",

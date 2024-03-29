@@ -7,7 +7,7 @@ import { NavMenu } from "@/components/NavMenu";
 import Breadcrumb from "@/components/BreadcrumbNav";
 import { AccessTokenProvider } from "@/providers/AccessTokenProvider";
 import { AxiosProvider } from "@/providers/AxiosProvider";
-import { Toaster } from "sonner";
+import { Toaster } from "@/components/ui/sonner";
 
 const primary = Roboto_Condensed({
   weight: ["400", "700"],
@@ -33,18 +33,18 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <header className="flex justify-between p-2 max-w-screen-xl xl:mx-auto  mx-5">
-            <ModeToggle />
-            <h1 className="text-xl flex justify-center items-center md:text-2xl xl:text-3xl bg-gradient-to-br from-primary to-black dark:to-white bg-clip-text text-transparent">
-              NEXT.JS 14 | Tailwind | Shadcn UI
-            </h1>
-            <NavMenu />
-          </header>
-          <Breadcrumb />
           <AccessTokenProvider>
+            <header className="flex justify-between p-2 max-w-screen-xl xl:mx-auto  mx-5">
+              <ModeToggle />
+              <h1 className="text-xl flex justify-center items-center md:text-2xl xl:text-3xl bg-gradient-to-br from-primary to-black dark:to-white bg-clip-text text-transparent">
+                NEXT.JS 14 | Tailwind | Shadcn UI
+              </h1>
+              <NavMenu />
+            </header>
+            <Breadcrumb />
             <AxiosProvider>{children}</AxiosProvider>
           </AccessTokenProvider>
-          <Toaster />
+          <Toaster position="top-center" />
         </ThemeProvider>
       </body>
     </html>

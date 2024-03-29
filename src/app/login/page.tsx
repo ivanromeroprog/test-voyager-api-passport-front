@@ -5,23 +5,16 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useAccessToken } from "@/providers/AccessTokenProvider";
 import { useAxios } from "@/providers/AxiosProvider";
+import { useRouter } from "next/navigation";
 import { FormEvent, useState } from "react";
 import { toast } from "sonner";
 
 export default function Page() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const { setAccessToken } = useAccessToken();
-  const { axiosAppInstance: ax, axiosApiAccessTokenInstance: tkn } = useAxios();
-
-  /*
-  useEffect(() => {
-    const f = async ()=> {
-      console.log(await tkn.get('/users'));
-    }
-    f();
-  }, [tkn])
-*/
+  const { setAccessToken, setUser, user } = useAccessToken();
+  const { axiosAppInstance: ax } = useAxios();
+  const router = useRouter();
 
   function login(e: FormEvent<HTMLFormElement>): void {
     const doLogin = async () => {
@@ -33,10 +26,11 @@ export default function Page() {
         password,
       });
 
-      console.log(response);
+      //console.log(response);
 
       if (response.data?.access_token) {
         setAccessToken(response.data?.access_token);
+        setUser(response.data?.user);
       } else if(response.data?.errors){
         toast('',{
           description: (Object.values(response.data?.errors)[0] as string[]).join(" "),
@@ -53,6 +47,8 @@ export default function Page() {
     };
     doLogin();
   }
+
+  if(user) return router.push('/');
 
   return (
     <main className="xl:mx-auto max-w-7xl mx-5">
@@ -71,6 +67,8 @@ export default function Page() {
             type="email"
             placeholder="myuser"
             onChange={(e) => setEmail(e.target.value)}
+            required
+            className="invalid:[&:not(:placeholder-shown):not(:focus)]:border-red-500"
           />
         </div>
 
@@ -83,6 +81,9 @@ export default function Page() {
             name="password"
             id="password"
             onChange={(e) => setPassword(e.target.value)}
+            required
+            placeholder=""
+            className="invalid:[&:not(:placeholder-shown):not(:focus)]:border-red-500"
           />
         </div>
 

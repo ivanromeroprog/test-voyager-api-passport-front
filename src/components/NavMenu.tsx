@@ -1,3 +1,5 @@
+"use client";
+
 import { IoMenuSharp } from "react-icons/io5";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
@@ -7,17 +9,25 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
 } from "@/components/ui/dropdown-menu";
+import { useAccessToken } from "@/providers/AccessTokenProvider";
 
 export function NavMenu() {
+  const { user } = useAccessToken();
+
   const navItems = [
     {
       name: "Home",
       path: "/",
     },
-    {
-      name: "Login",
-      path: "/login",
-    },
+    user
+      ? {
+          name: "Logout",
+          path: "/logout",
+        }
+      : {
+          name: "Login",
+          path: "/login",
+        },
   ];
 
   return (

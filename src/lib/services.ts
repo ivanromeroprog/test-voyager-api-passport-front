@@ -40,7 +40,17 @@ export function createAxiosInstances(accessToken: string | null = null) {
 
   return { axiosApiAccessTokenInstance, axiosApiInstance, axiosAppInstance };
 }
-const { axiosApiInstance: api } = createAxiosInstances();
+
+/**
+ * api: Instacia de api si Token
+ * app: Instancia de app local next
+ * apt: Instancia de api con token
+ */
+const {
+   axiosApiInstance: api, 
+   axiosAppInstance: app,
+   axiosApiAccessTokenInstance: apt
+} = createAxiosInstances();
 
 export async function login({
   email,
@@ -64,3 +74,32 @@ export async function login({
 
   return response;
 }
+
+export async function user() {
+  let response: { status: number; statusText: string; data: any } = {
+    status: 500,
+    statusText: "Error interno",
+    data: {},
+  };
+  await apt
+    .get("/user")
+    .then((r) => (response = r))
+    .catch((err) => (response = err.response));
+
+  return response;
+}
+
+export async function logout() {
+  let response: { status: number; statusText: string; data: any } = {
+    status: 500,
+    statusText: "Error interno",
+    data: {},
+  };
+  await app
+    .post("/logout")
+    .then((r) => (response = r))
+    .catch((err) => (response = err.response));
+
+  return response;
+}
+
