@@ -19,6 +19,11 @@ export function NavMenu() {
       name: "Home",
       path: "/",
     },
+  ];
+
+  if (user) navItems.push({ name: "Api Access", path: "/apiaccess" });
+  
+  navItems.push(
     user
       ? {
           name: "Logout",
@@ -27,8 +32,8 @@ export function NavMenu() {
       : {
           name: "Login",
           path: "/login",
-        },
-  ];
+        }
+  );
 
   return (
     <nav className="flex justify-center">

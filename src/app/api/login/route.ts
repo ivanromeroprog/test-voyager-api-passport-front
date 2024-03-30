@@ -29,14 +29,12 @@ async function handler(req: NextRequest) {
   });
 
   //Guardar resresh token para usar en server
-  // if (!refreshToken) {
-    cookies().set({
-      name: refreshTokenCookieName,
-      value: refreshToken,
-      httpOnly: true,
-      path: "/",
-    });
-  // }
+  cookies().set({
+    name: refreshTokenCookieName,
+    value: refreshToken,
+    httpOnly: true,
+    path: "/",
+  });
 
   return NextResponse.json({
     message: "OK",

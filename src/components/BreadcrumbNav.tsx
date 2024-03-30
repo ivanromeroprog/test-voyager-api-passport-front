@@ -19,6 +19,7 @@ export default function BreadcrumbNav() {
 
   const pageNames:any = {
     "login": "Login",
+    "apiaccess": "Api Access",
     "/": "Home",
   };
 

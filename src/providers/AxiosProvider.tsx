@@ -31,10 +31,8 @@ export const AxiosProvider: React.FC<AxiosProviderProps> = ({ children }) => {
 
   useEffect(() => {
 
-    console.log('cambio el access token');
     let {axiosApiAccessTokenInstance} = createAxiosInstances(accessToken);
     data.axiosApiAccessTokenInstance = axiosApiAccessTokenInstance;
-    console.log('listo');
 
   }, [accessToken])
 

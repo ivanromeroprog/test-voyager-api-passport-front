@@ -6,29 +6,26 @@ import { Label } from "@/components/ui/label";
 import { useAccessToken } from "@/providers/AccessTokenProvider";
 import { useAxios } from "@/providers/AxiosProvider";
 import { useRouter } from "next/navigation";
-import { FormEvent, useEffect, useState } from "react";
+import { FormEvent, useState } from "react";
 import { toast } from "sonner";
 
 export default function Page() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const { setAccessToken, setUser, user } = useAccessToken();
-  const { axiosAppInstance: ax } = useAxios();
+  const [endpoint, setEndPoint] = useState("");
+  const [data, setData] = useState([]);
+  const [page, setPage] = useState(1);
+  const { axiosApiAccessTokenInstance: tkn } = useAxios();
+  const { user } = useAccessToken();
   const router = useRouter();
 
-  function login(e: FormEvent<HTMLFormElement>): void {
-    const doLogin = async () => {
+  function query(e: FormEvent<HTMLFormElement>): void {
+    const doQuery = async () => {
       e.preventDefault();
-      if (ax === null) return;
+      if (tkn === null) return;
 
-      const response = await ax.post("/login", {
-        email,
-        password,
-      });
+      const response = await tkn.get(`${endpoint}`,{params: {page}});
 
-      if (response.data?.access_token) {
-        setAccessToken(response.data?.access_token);
-        setUser(response.data?.user);
+      if (response.status == 200) {
+        setData(response?.data?.data);
       } else if(response.data?.errors){
         toast('',{
           description: (Object.values(response.data?.errors)[0] as string[]).join(" "),
@@ -43,50 +40,49 @@ export default function Page() {
         });
       }
     };
-    doLogin();
+
+    doQuery();
   }
 
-  useEffect(() => {
-    if(user) return router.push('/');
-  }, [user])
-  
+  if(!user) return router.push('/');
 
   return (
     <main className="xl:mx-auto max-w-7xl mx-5">
       <h1 className="p-4 text-2xl bg-primary text-primary-foreground rounded-lg">
-        Login
+        Api Access
       </h1>
       <form
         className="w-full md:w-1/3 space-y-6 mt-5 md:mx-auto"
-        onSubmit={login}
+        onSubmit={query}
       >
         <div className="grid w-full items-center gap-1.5">
-          <Label htmlFor="email">E-mail </Label>
+          <Label htmlFor="endpoint">Endpoint </Label>
           <Input
-            id="email"
-            name="email"
-            type="email"
-            placeholder="user@user.com"
-            onChange={(e) => setEmail(e.target.value)}
+            id="endpoint"
+            name="endpoint"
+            type="text"
+            placeholder="users"
+            onChange={(e) => setEndPoint(e.target.value)}
             required
             className="invalid:[&:not(:placeholder-shown):not(:focus)]:border-red-500"
           />
         </div>
 
         <div className="grid w-full items-center gap-1.5">
-          <Label htmlFor="password" className="mt-2">
-            Password
-          </Label>
+          <Label htmlFor="page">Page </Label>
           <Input
-            type="password"
-            name="password"
-            id="password"
-            onChange={(e) => setPassword(e.target.value)}
+            id="page"
+            name="page"
+            type="number"
+            value={page}
+            placeholder="users"
+            onChange={(e) => setPage(Number(e.target.value))}
             required
-            placeholder="********"
             className="invalid:[&:not(:placeholder-shown):not(:focus)]:border-red-500"
           />
         </div>
+
+        {JSON.stringify(data)}
 
         <div className="text-center">
           <Button type="submit" className="mx-auto">
