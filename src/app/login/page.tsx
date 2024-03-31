@@ -15,29 +15,31 @@ export default function Page() {
   const { setAccessToken, setUser, user } = useAccessToken();
   const { axiosAppInstance: ax } = useAxios();
   const router = useRouter();
-
+  
   function login(e: FormEvent<HTMLFormElement>): void {
     const doLogin = async () => {
       e.preventDefault();
       if (ax === null) return;
+      let response = null; 
+      try {
+        response = await ax.post("/login", {
+          email,
+          password,
+        });
+      } catch (e) {}
 
-      const response = await ax.post("/login", {
-        email,
-        password,
-      });
-
-      if (response.data?.access_token) {
-        setAccessToken(response.data?.access_token);
-        setUser(response.data?.user);
-      } else if(response.data?.errors){
+      if (response?.data?.access_token) {
+        setAccessToken(response?.data?.access_token);
+        setUser(response?.data?.user);
+      } else if(response?.data?.errors){
         toast('',{
-          description: (Object.values(response.data?.errors)[0] as string[]).join(" "),
+          description: (Object.values(response?.data?.errors)[0] as string[]).join(" "),
           dismissible: true,
           icon: '⚠️',
       });
       } else {
         toast('',{
-          description: response.data?.message,
+          description: response?.data?.message ?? "Error de conexión",
           dismissible: true,
           icon: '⚠️'
         });
