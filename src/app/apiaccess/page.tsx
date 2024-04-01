@@ -8,6 +8,15 @@ import { useAxios } from "@/providers/AxiosProvider";
 import { useRouter } from "next/navigation";
 import { FormEvent, useState } from "react";
 import { toast } from "sonner";
+import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 
 export default function Page() {
   const [endpoint, setEndPoint] = useState("");
@@ -22,21 +31,23 @@ export default function Page() {
       e.preventDefault();
       if (tkn === null) return;
 
-      const response = await tkn.get(`${endpoint}`,{params: {page}});
+      const response = await tkn.get(`${endpoint}`, { params: { page } });
 
       if (response.status == 200) {
         setData(response?.data?.data);
-      } else if(response.data?.errors){
-        toast('',{
-          description: (Object.values(response.data?.errors)[0] as string[]).join(" "),
+      } else if (response.data?.errors) {
+        toast("", {
+          description: (
+            Object.values(response.data?.errors)[0] as string[]
+          ).join(" "),
           dismissible: true,
-          icon: '⚠️',
-      });
+          icon: "⚠️",
+        });
       } else {
-        toast('',{
+        toast("", {
           description: response.data?.message,
           dismissible: true,
-          icon: '⚠️'
+          icon: "⚠️",
         });
       }
     };
@@ -44,7 +55,7 @@ export default function Page() {
     doQuery();
   }
 
-  if(!user) return router.push('/');
+  if (!user) return router.push("/");
 
   return (
     <main className="xl:mx-auto max-w-7xl mx-5">
@@ -81,15 +92,34 @@ export default function Page() {
             className="invalid:[&:not(:placeholder-shown):not(:focus)]:border-red-500"
           />
         </div>
-
-        {JSON.stringify(data)}
-
         <div className="text-center">
           <Button type="submit" className="mx-auto">
             Submit
           </Button>
         </div>
       </form>
+      
+      {data?.[0] && (
+          <Table>
+            <TableCaption>{endpoint}</TableCaption>
+            <TableHeader>
+              <TableRow>
+                {Object.keys(data[0]).map((key) => (
+                  <TableHead key={key}>{key}</TableHead>
+                ))}
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {data.map((item, key) => (
+                <TableRow key={key}>
+                  {Object.values(item).map((value, index) => (
+                    <TableCell key={index}>{String(value)}</TableCell>
+                  ))}
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        )}
     </main>
   );
 }
