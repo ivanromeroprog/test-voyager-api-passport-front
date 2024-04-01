@@ -85,7 +85,7 @@ export default function Page() {
             id="password"
             onChange={(e) => setPassword(e.target.value)}
             required
-            placeholder="********"
+            placeholder=""
             className="invalid:[&:not(:placeholder-shown):not(:focus)]:border-red-500"
           />
         </div>
